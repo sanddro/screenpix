@@ -1,0 +1,18 @@
+{
+  "name": "screenpix",
+  "productName": "Screenpix",
+  "version": "1.1.0",
+  "description": "Screenshot tool",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Sandro Jikia",
+    "email": "jikiasandro@gmail.com",
+    "url": "https://github.com/sanddro/screenpix"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}
