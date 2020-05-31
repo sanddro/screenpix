@@ -1,0 +1,22 @@
+.wrapper {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  cursor: cell;
+}
+
+.bg {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  border: 0 solid rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.box {
+  position: absolute;
+  height: 0;
+  z-index: 200;
+  border: 2px dashed white;
+  pointer-events: none;
+}
