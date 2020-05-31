@@ -1,14 +1,35 @@
-import { screen } from 'electron';
+import electron from 'electron';
+import Config from '../constants/Config';
+
+export function getScreensSize() {
+  let screensWidth = 0;
+  let screensHeight = 0;
+
+  const screen = electron.screen || electron.remote.screen;
+
+  screen.getAllDisplays().forEach(display => {
+    screensWidth = Math.max(
+      display.bounds.x + display.bounds.width,
+      screensWidth
+    );
+    screensHeight = Math.max(
+      display.bounds.y + display.bounds.height,
+      screensHeight
+    );
+  });
+
+  return { width: screensWidth, height: screensHeight };
+}
 
 export function showMainWindow(win) {
-  const { width, height } = screen.getPrimaryDisplay().bounds;
+  const { width, height } = getScreensSize();
   // opacity to fix issue when window shows and then moves to cursor
   win.setOpacity(0);
   win.setBounds({
-    width: width + 20,
-    height: height + 20,
-    x: -10,
-    y: -10
+    width: width + Config.windowOutlineWidth,
+    height: height + Config.windowOutlineWidth,
+    x: -(Config.windowOutlineWidth / 2),
+    y: -(Config.windowOutlineWidth / 2)
   });
   win.show();
   win.focus();

@@ -15,7 +15,6 @@ import {
   Tray,
   Menu,
   globalShortcut,
-  screen,
   Notification,
   ipcMain
 } from 'electron';
@@ -23,10 +22,9 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import isDev from 'electron-is-dev';
 import MenuBuilder from './menu';
-import { showMainWindow, hideMainWindow } from './utils/window';
+import { showMainWindow, hideMainWindow, getScreensSize } from './utils/window';
 import writeToClipboard from './utils/clipboard';
-
-const hotkey = 'Alt+PrintScreen';
+import Config from './constants/Config';
 
 export default class AppUpdater {
   constructor() {
@@ -50,7 +48,7 @@ if (isDev || process.env.DEBUG_PROD === 'true') {
 }
 
 const createWindow = async () => {
-  const { width, height } = screen.getPrimaryDisplay().bounds;
+  const { width, height } = getScreensSize();
   mainWindow = new BrowserWindow({
     show: false,
     width,
@@ -88,7 +86,7 @@ const createWindow = async () => {
     if (!isDev) mainWindow.webContents.closeDevTools();
   });
 
-  globalShortcut.register(hotkey, () => {
+  globalShortcut.register(Config.screenshotHotkey, () => {
     if (mainWindow?.isVisible()) return;
     mainWindow?.webContents.send('captureScreenshot');
   });
@@ -103,17 +101,20 @@ const createWindow = async () => {
   });
 
   mainWindow.on('closed', () => {
-    globalShortcut.unregister(hotkey);
+    globalShortcut.unregister(Config.screenshotHotkey);
     mainWindow = null;
     tray = null;
   });
 
   mainWindow.on('resize', () => {
     if (
-      mainWindow?.getSize()[0] !== width + 20 ||
-      mainWindow?.getSize()[1] !== height + 20
+      mainWindow?.getSize()[0] !== width + Config.windowOutlineWidth ||
+      mainWindow?.getSize()[1] !== height + Config.windowOutlineWidth
     ) {
-      mainWindow?.setSize(width + 20, height + 20);
+      mainWindow?.setSize(
+        width + Config.windowOutlineWidth,
+        height + Config.windowOutlineWidth
+      );
     }
   });
 
@@ -148,7 +149,7 @@ const createWindow = async () => {
   if (Notification.isSupported()) {
     not = new Notification({
       title: 'Screenpix',
-      body: `Screenpix is running minimized in tray. Press ${hotkey.replace(
+      body: `Screenpix is running minimized in tray. Press ${Config.screenshotHotkey.replace(
         'CommandOrControl',
         'Ctrl'
       )} to open.`,
