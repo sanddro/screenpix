@@ -9,7 +9,6 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import fs from 'fs';
 import {
   app,
   BrowserWindow,
@@ -22,6 +21,7 @@ import {
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import isDev from 'electron-is-dev';
 import MenuBuilder from './menu';
 import { showMainWindow, hideMainWindow } from './utils/window';
 import writeToClipboard from './utils/clipboard';
@@ -45,32 +45,11 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
+if (isDev || process.env.DEBUG_PROD === 'true') {
   require('electron-debug')();
 }
 
-const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  // const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const extensions: any[] = [];
-
-  return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
-  ).catch(console.log);
-};
-
 const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
   const { width, height } = screen.getPrimaryDisplay().bounds;
   mainWindow = new BrowserWindow({
     show: false,
@@ -86,14 +65,13 @@ const createWindow = async () => {
     thickFrame: false,
     transparent: true,
     backgroundColor: '#00000000',
-    webPreferences:
-      process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
-        ? {
-            nodeIntegration: true
-          }
-        : {
-            preload: path.join(__dirname, 'dist/renderer.prod.js')
-          }
+    webPreferences: isDev
+      ? {
+          nodeIntegration: true
+        }
+      : {
+          preload: path.join(__dirname, 'dist/renderer.prod.js')
+        }
   });
 
   mainWindow.setAlwaysOnTop(true, 'pop-up-menu');
@@ -107,16 +85,15 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    // mainWindow.webContents.closeDevTools();
+    if (!isDev) mainWindow.webContents.closeDevTools();
   });
 
   globalShortcut.register(hotkey, () => {
+    if (mainWindow?.isVisible()) return;
     mainWindow?.webContents.send('captureScreenshot');
   });
 
-  ipcMain.on('screenCaptured', (_, base64String) => {
-    const base64Image = base64String.split(';base64,').pop();
-    fs.writeFile('image.jpg', base64Image, { encoding: 'base64' }, () => {});
+  ipcMain.on('screenCaptured', () => {
     showMainWindow(mainWindow);
   });
 
@@ -129,6 +106,15 @@ const createWindow = async () => {
     globalShortcut.unregister(hotkey);
     mainWindow = null;
     tray = null;
+  });
+
+  mainWindow.on('resize', () => {
+    if (
+      mainWindow?.getSize()[0] !== width + 20 ||
+      mainWindow?.getSize()[1] !== height + 20
+    ) {
+      mainWindow?.setSize(width + 20, height + 20);
+    }
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);

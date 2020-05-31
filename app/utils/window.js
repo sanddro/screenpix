@@ -5,10 +5,10 @@ export function showMainWindow(win) {
   // opacity to fix issue when window shows and then moves to cursor
   win.setOpacity(0);
   win.setBounds({
-    width,
-    height,
-    x: 0,
-    y: 0
+    width: width + 20,
+    height: height + 20,
+    x: -10,
+    y: -10
   });
   win.show();
   win.focus();
@@ -23,4 +23,5 @@ export function hideMainWindow(win) {
   // to return focus to previous place. minimize - windows, hide - linux
   win.minimize();
   win.hide();
+  win.webContents.send('windowHidden');
 }

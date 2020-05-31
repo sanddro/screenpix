@@ -1,5 +1,6 @@
 /* eslint @typescript-eslint/ban-ts-ignore: off */
 import { Menu, BrowserWindow } from 'electron';
+import isDev from 'electron-is-dev';
 import { hideMainWindow } from './utils/window';
 
 export default class MenuBuilder {
@@ -10,10 +11,7 @@ export default class MenuBuilder {
   }
 
   buildMenu() {
-    if (
-      process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true'
-    ) {
+    if (isDev || process.env.DEBUG_PROD === 'true') {
       this.setupDevelopmentEnvironment();
     }
 
@@ -51,10 +49,7 @@ export default class MenuBuilder {
       }
     ];
 
-    if (
-      process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true'
-    ) {
+    if (isDev || process.env.DEBUG_PROD === 'true') {
       submenu = [
         ...submenu,
         {

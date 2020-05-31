@@ -1,0 +1,26 @@
+.wrapper {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.dimensions {
+  background: black;
+  color: white;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  padding: 0 7px;
+  border-radius: 7px;
+  position: absolute;
+  bottom: calc(100% + 3px);
+  left: -2px;
+  white-space: nowrap;
+
+  &.in {
+    top: 2px;
+    left: 2px;
+    background: rgba(black, 0.5);
+  }
+}

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './Selection.scss';
+import Toolbar from '../toolbar/Toolbar';
 
 export default function Selection({ onSelect }: any) {
   const [size, setSize]: any = useState(null);
@@ -9,15 +10,17 @@ export default function Selection({ onSelect }: any) {
   const [endPosition, setEndPosition]: any = useState(null);
   const [dragging, setDragging]: any = useState(false);
 
-  const onMouseDown = () => {
+  const isSelected = () => size && size.width && size.height;
+
+  const onMouseDown = (e: any) => {
     setSize(null);
-    setStartPosition(null);
+    setStartPosition({ x: e.screenX, y: e.screenY });
     setEndPosition(null);
     setDragging(true);
   };
 
   const onMouseUp = () => {
-    if (size) {
+    if (isSelected()) {
       const topLeft = {
         x: Math.min(startPosition?.x, endPosition?.x),
         y: Math.min(startPosition?.y, endPosition?.y)
@@ -33,13 +36,12 @@ export default function Selection({ onSelect }: any) {
 
   const onMouseMove = (e: any) => {
     if (!dragging) return;
-    const pos: any = { x: e.pageX, y: e.pageY };
-    if (!startPosition) {
-      setStartPosition(pos);
-    }
+    const pos: any = { x: e.screenX, y: e.screenY };
+    let startPos = startPosition || pos;
+
     setEndPosition(pos);
-    const width = Math.abs(pos.x - (startPosition?.x || pos.x));
-    const height = Math.abs(pos.y - (startPosition?.y || pos.y));
+    const width = Math.abs(pos.x - startPos.x);
+    const height = Math.abs(pos.y - startPos.y);
     setSize({ width, height });
   };
 
@@ -62,6 +64,11 @@ export default function Selection({ onSelect }: any) {
       document.body.offsetHeight - borders.borderTopWidth - size.height;
   }
 
+  const topLeft = {
+    x: size ? Math.min(startPosition?.x, endPosition?.x) : undefined,
+    y: size ? Math.min(startPosition?.y, endPosition?.y) : undefined
+  };
+
   return (
     <div
       className={styles.wrapper}
@@ -75,11 +82,19 @@ export default function Selection({ onSelect }: any) {
         style={{
           width: size?.width,
           height: size?.height,
-          left: Math.min(startPosition?.x, endPosition?.x) || undefined,
-          top: Math.min(startPosition?.y, endPosition?.y) || undefined,
+          left: topLeft.x,
+          top: topLeft.y,
           border: !size ? 'none' : undefined
         }}
-      />
+      >
+        {size && (
+          <Toolbar
+            width={size?.width}
+            height={size?.height}
+            topLeft={topLeft}
+          />
+        )}
+      </div>
     </div>
   );
 }

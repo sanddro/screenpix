@@ -12,14 +12,19 @@ body {
   padding: 0;
 }
 
+html {
+  padding: 10px;
+  overflow: hidden;
+}
+
 body {
   position: relative;
   font-family: Arial, Helvetica, Helvetica Neue, serif;
 }
 
 *,
-*:before,
-*:after {
+*::before,
+*::after {
   box-sizing: border-box;
   -webkit-user-select: none;
 }

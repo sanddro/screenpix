@@ -2,7 +2,7 @@
   height: 100%;
   width: 100%;
   position: relative;
-  cursor: cell;
+  cursor: crosshair;
 }
 
 .bg {
@@ -17,6 +17,7 @@
   position: absolute;
   height: 0;
   z-index: 200;
-  border: 2px dashed white;
+  // TODO Black space between dashes
+  border: 1px dashed white;
   pointer-events: none;
 }
