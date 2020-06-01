@@ -94,7 +94,7 @@ const createWindow = async () => {
       if (mainWindow?.isVisible()) return;
       showMainWindow(mainWindow);
       loadingCSSKey = await (mainWindow as BrowserWindow).webContents.insertCSS(
-        '* { cursor: wait !important; }'
+        '* { cursor: progress !important; }'
       );
     });
   });
