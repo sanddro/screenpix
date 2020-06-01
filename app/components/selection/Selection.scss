@@ -3,6 +3,9 @@
   width: 100%;
   position: relative;
   cursor: crosshair;
+  &.loading {
+    cursor: wait;
+  }
 }
 
 .bg {
@@ -17,7 +20,19 @@
   position: absolute;
   height: 0;
   z-index: 200;
-  // TODO Black space between dashes
-  border: 1px dashed white;
   pointer-events: none;
+  &::before,
+  &::after {
+    display: block;
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    border: 1px solid black;
+  }
+  &::after {
+    border: 1px dashed white;
+  }
 }

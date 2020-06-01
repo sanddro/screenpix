@@ -24,6 +24,7 @@ export function getScreensSize() {
 export function showMainWindow(win) {
   const { width, height } = getScreensSize();
   // opacity to fix issue when window shows and then moves to cursor
+  win.webContents.send('showWindow');
   win.setOpacity(0);
   win.setBounds({
     width: width + Config.windowOutlineWidth,

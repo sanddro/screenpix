@@ -88,10 +88,6 @@ const createWindow = async () => {
 
   globalShortcut.register(Config.screenshotHotkey, () => {
     if (mainWindow?.isVisible()) return;
-    mainWindow?.webContents.send('captureScreenshot');
-  });
-
-  ipcMain.on('screenCaptured', () => {
     showMainWindow(mainWindow);
   });
 
@@ -143,7 +139,7 @@ const createWindow = async () => {
   tray.setToolTip('Screenpix');
 
   tray.on('click', () => {
-    mainWindow?.webContents.send('captureScreenshot');
+    showMainWindow(mainWindow);
   });
 
   if (Notification.isSupported()) {

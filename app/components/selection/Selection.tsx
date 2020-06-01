@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import styles from './Selection.scss';
 import Toolbar from '../toolbar/Toolbar';
 
-export default function Selection({ onSelect }: any) {
+export default function Selection({ onSelect, loaded }: any) {
   const [size, setSize]: any = useState(null);
   const [startPosition, setStartPosition]: any = useState(null);
   const [endPosition, setEndPosition]: any = useState(null);
@@ -36,6 +36,7 @@ export default function Selection({ onSelect }: any) {
 
   const onMouseMove = (e: any) => {
     if (!dragging) return;
+    console.log('move');
     const pos: any = { x: e.screenX, y: e.screenY };
     let startPos = startPosition || pos;
 
@@ -69,6 +70,9 @@ export default function Selection({ onSelect }: any) {
     y: size ? Math.min(startPosition?.y, endPosition?.y) : undefined
   };
 
+  if (!loaded) {
+    return <div className={`${styles.wrapper} ${styles.loading}`}></div>;
+  }
   return (
     <div
       className={styles.wrapper}
