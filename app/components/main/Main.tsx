@@ -6,9 +6,11 @@ import Selection from '../selection/Selection';
 
 export default function Main() {
   const [imgSrc, setImgSrc] = useState('');
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     ipcRenderer.on('showWindow', async () => {
+      setIsVisible(true);
       try {
         const base64String = (await takeScreenshot()) as string;
         setImgSrc(base64String);
@@ -21,6 +23,7 @@ export default function Main() {
 
     ipcRenderer.on('windowHidden', () => {
       setImgSrc('');
+      setIsVisible(false);
     });
 
     return () => {
@@ -48,7 +51,7 @@ export default function Main() {
         alt=""
         id="full-img"
       />
-      <Selection onSelect={onSelect} loaded={!!imgSrc} />
+      {isVisible && <Selection onSelect={onSelect} loaded={!!imgSrc} />}
     </div>
   );
 }

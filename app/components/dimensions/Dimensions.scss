@@ -1,0 +1,35 @@
+.dimensions {
+  background: black;
+  color: white;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  padding: 0 7px;
+  border-radius: 7px;
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: -2px;
+  white-space: nowrap;
+
+  &.in {
+    top: 2px;
+    left: 2px;
+    bottom: auto;
+    right: auto;
+  }
+
+  &.left {
+    top: 0;
+    right: calc(100% + 2px);
+    left: auto;
+    bottom: auto;
+  }
+
+  &.topLeft {
+    bottom: calc(100% + 2px) !important;
+    right: 100% !important;
+    left: auto;
+    top: auto;
+  }
+}

@@ -6,7 +6,11 @@ module.exports = {
 
     '@typescript-eslint/no-explicit-any': 'off',
     'no-await-in-loop': 'off',
-    'no-restricted-syntax': 'off'
+    'no-restricted-syntax': 'off',
+    'react/button-has-type': 'off',
+    'no-param-reassign': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
+    'prefer-template': 'off'
   },
   settings: {
     'import/resolver': {

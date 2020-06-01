@@ -1,7 +1,9 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState } from 'react';
+import { Resizable } from 're-resizable';
 import styles from './Selection.scss';
 import Toolbar from '../toolbar/Toolbar';
+import Dimensions from '../dimensions/Dimensions';
 
 export default function Selection({ onSelect, loaded }: any) {
   const [size, setSize]: any = useState(null);
@@ -9,27 +11,34 @@ export default function Selection({ onSelect, loaded }: any) {
   const [endPosition, setEndPosition]: any = useState(null);
   const [dragging, setDragging]: any = useState(false);
 
-  const isSelected = () => size && size.width && size.height;
+  const [isSelected, setIsSelected] = useState(false);
+
+  const topLeft = {
+    x: size ? Math.min(startPosition?.x, endPosition?.x) : undefined,
+    y: size ? Math.min(startPosition?.y, endPosition?.y) : undefined
+  };
+
+  const bottomRight = {
+    x: size ? topLeft.x + size.width : undefined,
+    y: size ? topLeft.y + size.height : undefined
+  };
+
+  const onCopy = () => {
+    onSelect(topLeft, size.width, size.height);
+  };
+
+  const onSave = () => {};
 
   const onMouseDown = (e: any) => {
     setSize(null);
     setStartPosition({ x: e.screenX, y: e.screenY });
     setEndPosition(null);
     setDragging(true);
+    setIsSelected(false);
   };
 
   const onMouseUp = () => {
-    if (isSelected()) {
-      const topLeft = {
-        x: Math.min(startPosition?.x, endPosition?.x),
-        y: Math.min(startPosition?.y, endPosition?.y)
-      };
-      onSelect(topLeft, size.width, size.height);
-    }
-
-    setSize(null);
-    setStartPosition(null);
-    setEndPosition(null);
+    setIsSelected(size && size.width && size.height);
     setDragging(false);
   };
 
@@ -63,11 +72,6 @@ export default function Selection({ onSelect, loaded }: any) {
       document.body.offsetHeight - borders.borderTopWidth - size.height;
   }
 
-  const topLeft = {
-    x: size ? Math.min(startPosition?.x, endPosition?.x) : undefined,
-    y: size ? Math.min(startPosition?.y, endPosition?.y) : undefined
-  };
-
   if (!loaded) {
     return <div className={styles.wrapper} />;
   }
@@ -91,10 +95,19 @@ export default function Selection({ onSelect, loaded }: any) {
         }}
       >
         {size && (
-          <Toolbar
+          <Dimensions
             width={size?.width}
             height={size?.height}
             topLeft={topLeft}
+          />
+        )}
+        {isSelected && (
+          <Toolbar
+            width={size?.width}
+            height={size?.height}
+            bottomRight={bottomRight}
+            onCopy={onCopy}
+            onSave={onSave}
           />
         )}
       </div>
