@@ -3,9 +3,6 @@
   width: 100%;
   position: relative;
   cursor: crosshair;
-  &.loading {
-    cursor: wait;
-  }
 }
 
 .bg {
@@ -18,9 +15,11 @@
 
 .box {
   position: absolute;
+  width: 0;
   height: 0;
   z-index: 200;
   pointer-events: none;
+
   &::before,
   &::after {
     display: block;
@@ -34,5 +33,12 @@
   }
   &::after {
     border: 1px dashed white;
+  }
+
+  &.not_selected {
+    &::after,
+    &::before {
+      display: none;
+    }
   }
 }

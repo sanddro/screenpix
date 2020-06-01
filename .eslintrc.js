@@ -2,7 +2,11 @@ module.exports = {
   extends: 'erb/typescript',
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
-    'import/no-extraneous-dependencies': 'off'
+    'import/no-extraneous-dependencies': 'off',
+
+    '@typescript-eslint/no-explicit-any': 'off',
+    'no-await-in-loop': 'off',
+    'no-restricted-syntax': 'off'
   },
   settings: {
     'import/resolver': {

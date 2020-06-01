@@ -1,5 +1,4 @@
-/* eslint-disable */
-
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState } from 'react';
 import styles from './Selection.scss';
 import Toolbar from '../toolbar/Toolbar';
@@ -36,9 +35,8 @@ export default function Selection({ onSelect, loaded }: any) {
 
   const onMouseMove = (e: any) => {
     if (!dragging) return;
-    console.log('move');
     const pos: any = { x: e.screenX, y: e.screenY };
-    let startPos = startPosition || pos;
+    const startPos = startPosition || pos;
 
     setEndPosition(pos);
     const width = Math.abs(pos.x - startPos.x);
@@ -71,8 +69,9 @@ export default function Selection({ onSelect, loaded }: any) {
   };
 
   if (!loaded) {
-    return <div className={`${styles.wrapper} ${styles.loading}`}></div>;
+    return <div className={styles.wrapper} />;
   }
+
   return (
     <div
       className={styles.wrapper}
@@ -82,7 +81,7 @@ export default function Selection({ onSelect, loaded }: any) {
     >
       <div className={styles.bg} style={borders} />
       <div
-        className={styles.box}
+        className={`${styles.box} ${size ? '' : styles.not_selected}`}
         style={{
           width: size?.width,
           height: size?.height,

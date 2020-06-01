@@ -22,7 +22,11 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import isDev from 'electron-is-dev';
 import MenuBuilder from './menu';
-import { showMainWindow, hideMainWindow, getScreensSize } from './utils/window';
+import {
+  showMainWindow,
+  hideMainWindow,
+  getAllDisplaysSize
+} from './utils/window';
 import writeToClipboard from './utils/clipboard';
 import Config from './constants/Config';
 
@@ -37,6 +41,7 @@ export default class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let not: Notification | null = null;
+let loadingCSSKey: string;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -48,7 +53,7 @@ if (isDev || process.env.DEBUG_PROD === 'true') {
 }
 
 const createWindow = async () => {
-  const { width, height } = getScreensSize();
+  const { width, height } = getAllDisplaysSize();
   mainWindow = new BrowserWindow({
     show: false,
     width,
@@ -84,11 +89,18 @@ const createWindow = async () => {
       throw new Error('"mainWindow" is not defined');
     }
     if (!isDev) mainWindow.webContents.closeDevTools();
+
+    globalShortcut.register(Config.screenshotHotkey, async () => {
+      if (mainWindow?.isVisible()) return;
+      showMainWindow(mainWindow);
+      loadingCSSKey = await (mainWindow as BrowserWindow).webContents.insertCSS(
+        '* { cursor: wait !important; }'
+      );
+    });
   });
 
-  globalShortcut.register(Config.screenshotHotkey, () => {
-    if (mainWindow?.isVisible()) return;
-    showMainWindow(mainWindow);
+  ipcMain.on('screenCaptured', () => {
+    mainWindow?.webContents.removeInsertedCSS(loadingCSSKey);
   });
 
   ipcMain.on('regionSelected', (_, base64String) => {

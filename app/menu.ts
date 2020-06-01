@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/ban-ts-ignore: off */
 import { Menu, BrowserWindow } from 'electron';
 import isDev from 'electron-is-dev';
 import { hideMainWindow } from './utils/window';

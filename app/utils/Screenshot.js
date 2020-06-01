@@ -1,10 +1,40 @@
-/* eslint-disable */
 import { remote as electron, desktopCapturer } from 'electron';
+import { getDisplaysSize } from './window';
+
+async function base64ToImg(base64String) {
+  return new Promise(resolve => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.src = base64String;
+  });
+}
+
+async function concatDisplayImages(displayImages) {
+  const displaysSize = getDisplaysSize(displayImages.map(el => el.display));
+
+  const canvas = document.createElement('canvas');
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  canvas.width = displaysSize.width;
+  canvas.height = displaysSize.height;
+
+  for (const elem of displayImages) {
+    ctx.drawImage(
+      await base64ToImg(elem.dataURL),
+      elem.display.bounds.x,
+      elem.display.bounds.y
+    );
+  }
+
+  return canvas.toDataURL('image/png');
+}
 
 export default async function takeScreenshot() {
   const displays = electron.screen.getAllDisplays();
 
-  const dataURLs = [];
+  const displayImages = [];
 
   for (const display of displays) {
     const sources = await desktopCapturer.getSources({
@@ -15,11 +45,16 @@ export default async function takeScreenshot() {
       }
     });
 
-    const source = sources.find(source => source.display_id == display.id);
-    dataURLs.push(source.thumbnail.toDataURL());
+    const source = sources.find(
+      s => String(s.display_id) === String(display.id)
+    );
+
+    displayImages.push({ display, dataURL: source.thumbnail.toDataURL() });
   }
 
-  return dataURLs[0];
+  const full = await concatDisplayImages(displayImages);
+
+  return full;
 }
 
 export function resizeDataURL(fullImg, x, y, wantedWidth, wantedHeight) {
@@ -44,5 +79,5 @@ export function resizeDataURL(fullImg, x, y, wantedWidth, wantedHeight) {
     wantedWidth,
     wantedHeight
   );
-  return canvas.toDataURL('image/jpeg', 1.0);
+  return canvas.toDataURL('image/png');
 }

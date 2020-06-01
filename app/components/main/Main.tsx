@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 import styles from './Main.scss';
@@ -12,10 +10,11 @@ export default function Main() {
   useEffect(() => {
     ipcRenderer.on('showWindow', async () => {
       try {
-        const base64String = await takeScreenshot();
+        const base64String = (await takeScreenshot()) as string;
         setImgSrc(base64String);
-        ipcRenderer.send('screenCaptured', base64String);
+        ipcRenderer.send('screenCaptured');
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error(e);
       }
     });
@@ -43,9 +42,12 @@ export default function Main() {
 
   return (
     <div className={styles.wrapper}>
-      {imgSrc && (
-        <img className={styles.capturedImg} src={imgSrc} alt="" id="full-img" />
-      )}
+      <img
+        className={`${styles.capturedImg} ${!imgSrc ? styles.hidden : ''}`}
+        src={imgSrc}
+        alt=""
+        id="full-img"
+      />
       <Selection onSelect={onSelect} loaded={!!imgSrc} />
     </div>
   );
