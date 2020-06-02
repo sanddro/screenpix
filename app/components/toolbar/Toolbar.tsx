@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import styles from './Toolbar.scss';
 import { getAllDisplaysSize } from '../../utils/window';
+import useKeyPress from '../../hooks/KeyPress';
 
 export default function Toolbar({
   width,
@@ -11,6 +12,8 @@ export default function Toolbar({
 }: any) {
   const toolbar: any = useRef(null);
   const [style, setStyle] = useState(styles.toolbar);
+  const ctrlCPressed = useKeyPress('c', true);
+  const ctrlSPressed = useKeyPress('s', true);
 
   useEffect(() => {
     const displaysSize = getAllDisplaysSize();
@@ -31,6 +34,11 @@ export default function Toolbar({
       setStyle(st);
     }
   }, [toolbar, bottomRight]);
+
+  useEffect(() => {
+    if (ctrlCPressed) onCopy();
+    if (ctrlSPressed) onSave();
+  }, [ctrlCPressed, ctrlCPressed]);
 
   return (
     <div ref={toolbar} className={style} onMouseDown={e => e.stopPropagation()}>
