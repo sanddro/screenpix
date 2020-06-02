@@ -10,7 +10,8 @@ module.exports = {
     'react/button-has-type': 'off',
     'no-param-reassign': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
-    'prefer-template': 'off'
+    'prefer-template': 'off',
+    'react/prop-types': 'off'
   },
   settings: {
     'import/resolver': {

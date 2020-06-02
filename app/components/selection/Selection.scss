@@ -12,32 +12,3 @@
   border: 0 solid rgba(0, 0, 0, 0.5);
   pointer-events: none;
 }
-
-.box {
-  position: absolute;
-  width: 0;
-  height: 0;
-  z-index: 200;
-
-  &::before,
-  &::after {
-    display: block;
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    border: 1px solid black;
-  }
-  &::after {
-    border: 1px dashed white;
-  }
-
-  &.not_selected {
-    &::after,
-    &::before {
-      display: none;
-    }
-  }
-}
