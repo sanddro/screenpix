@@ -38,7 +38,7 @@ export default function Toolbar({
   useEffect(() => {
     if (ctrlCPressed) onCopy();
     if (ctrlSPressed) onSave();
-  }, [ctrlCPressed, ctrlCPressed]);
+  }, [ctrlCPressed, ctrlSPressed]);
 
   return (
     <div ref={toolbar} className={style} onMouseDown={e => e.stopPropagation()}>

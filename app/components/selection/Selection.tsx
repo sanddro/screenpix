@@ -4,7 +4,7 @@ import Toolbar from '../toolbar/Toolbar';
 import Dimensions from '../dimensions/Dimensions';
 import Resizer from '../resizer/Resizer';
 
-export default function Selection({ onSelect, loaded }: any) {
+export default function Selection({ onCopy, onSave, loaded }: any) {
   const [size, setSize]: any = useState(null);
   const [topLeft, setTopLeft]: any = useState(null);
   const [isSelected, setIsSelected] = useState(false);
@@ -14,11 +14,13 @@ export default function Selection({ onSelect, loaded }: any) {
     y: size && topLeft ? topLeft.y + size.height : undefined
   };
 
-  const onCopy = () => {
-    onSelect(topLeft, size.width, size.height);
+  const copy = () => {
+    onCopy(topLeft, size.width, size.height);
   };
 
-  const onSave = () => {};
+  const save = () => {
+    onSave(topLeft, size.width, size.height);
+  };
 
   const onResizerChange = (newSize: any, newTopLeft: any) => {
     setSize(newSize);
@@ -71,8 +73,8 @@ export default function Selection({ onSelect, loaded }: any) {
             width={size?.width}
             height={size?.height}
             bottomRight={bottomRight}
-            onCopy={onCopy}
-            onSave={onSave}
+            onCopy={copy}
+            onSave={save}
           />
         )}
       </Resizer>

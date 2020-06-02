@@ -81,3 +81,12 @@ export function resizeDataURL(fullImg, x, y, wantedWidth, wantedHeight) {
   );
   return canvas.toDataURL('image/png');
 }
+
+export function downloadBase64Image(base64String) {
+  const link = document.createElement('a');
+  link.href = base64String;
+  link.download = 'Screenshot.png';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}

@@ -103,8 +103,12 @@ const createWindow = async () => {
     mainWindow?.webContents.removeInsertedCSS(loadingCSSKey);
   });
 
-  ipcMain.on('regionSelected', (_, base64String) => {
+  ipcMain.on('copyRegion', (_, base64String) => {
     writeToClipboard(base64String);
+    hideMainWindow(mainWindow);
+  });
+
+  ipcMain.on('hideMainWindow', () => {
     hideMainWindow(mainWindow);
   });
 

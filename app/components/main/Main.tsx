@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 import styles from './Main.scss';
-import takeScreenshot, { resizeDataURL } from '../../utils/Screenshot';
+import takeScreenshot, {
+  resizeDataURL,
+  downloadBase64Image
+} from '../../utils/Screenshot';
 import Selection from '../selection/Selection';
 
 export default function Main() {
@@ -32,7 +35,7 @@ export default function Main() {
     };
   }, []);
 
-  const onSelect = async (topLeft: any, width: number, height: number) => {
+  const onCopy = async (topLeft: any, width: number, height: number) => {
     const resized = await resizeDataURL(
       document.getElementById('full-img'),
       topLeft.x,
@@ -40,7 +43,22 @@ export default function Main() {
       width,
       height
     );
-    if (resized) ipcRenderer.send('regionSelected', resized);
+    if (resized) ipcRenderer.send('copyRegion', resized);
+  };
+
+  const onSave = async (topLeft: any, width: number, height: number) => {
+    const resized: any = await resizeDataURL(
+      document.getElementById('full-img'),
+      topLeft.x,
+      topLeft.y,
+      width,
+      height
+    );
+    if (!resized) return;
+
+    downloadBase64Image(resized);
+
+    ipcRenderer.send('hideMainWindow');
   };
 
   return (
@@ -51,7 +69,9 @@ export default function Main() {
         alt=""
         id="full-img"
       />
-      {isVisible && <Selection onSelect={onSelect} loaded={!!imgSrc} />}
+      {isVisible && (
+        <Selection onCopy={onCopy} onSave={onSave} loaded={!!imgSrc} />
+      )}
     </div>
   );
 }
