@@ -60,8 +60,8 @@ if (isDev || process.env.DEBUG_PROD === 'true') {
 function createSettingsWindow() {
   settingsWindow = new BrowserWindow({
     title: 'Settings',
-    width: 500,
-    height: 600,
+    width: getConfig().settingsWindowWidth,
+    height: getConfig().settingsWindowHeight,
     webPreferences: {
       nodeIntegration: true
     },

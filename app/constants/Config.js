@@ -2,7 +2,9 @@ import { remote, ipcRenderer } from 'electron';
 
 export const defaultConfig = {
   windowOutlineWidth: 20,
-  screenshotHotkey: 'Alt+PrintScreen'
+  screenshotHotkey: 'Alt+PrintScreen',
+  settingsWindowWidth: 500,
+  settingsWindowHeight: 400
 };
 
 export function initConfig() {
@@ -12,7 +14,7 @@ export function initConfig() {
     const savedConfig = localStorage.getItem('config');
     if (savedConfig) {
       const parsed = JSON.parse(savedConfig);
-      config = parsed;
+      config = Object.assign(config, parsed);
     }
   } catch (e) {
     // eslint-disable-next-line no-console
