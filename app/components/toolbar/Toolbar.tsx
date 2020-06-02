@@ -3,13 +3,7 @@ import styles from './Toolbar.scss';
 import { getAllDisplaysSize } from '../../utils/window';
 import useKeyPress from '../../hooks/KeyPress';
 
-export default function Toolbar({
-  width,
-  height,
-  bottomRight,
-  onCopy,
-  onSave
-}: any) {
+export default function Toolbar({ bottomRight, onCopy, onSave }: any) {
   const toolbar: any = useRef(null);
   const [style, setStyle] = useState(styles.toolbar);
   const ctrlCPressed = useKeyPress('c', true);

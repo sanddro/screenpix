@@ -39,6 +39,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let settingsWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let not: Notification | null = null;
 let loadingCSSKey: string;
@@ -50,6 +51,28 @@ if (process.env.NODE_ENV === 'production') {
 
 if (isDev || process.env.DEBUG_PROD === 'true') {
   require('electron-debug')();
+}
+
+function createSettingsWindow() {
+  settingsWindow = new BrowserWindow({
+    title: 'Settings',
+    width: 500,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    },
+    fullscreenable: false,
+    resizable: false,
+    useContentSize: true,
+    show: true
+  });
+  if (!isDev) settingsWindow.setMenu(null);
+
+  settingsWindow.loadURL(`file://${__dirname}/app.html#/settings`);
+
+  settingsWindow.on('closed', () => {
+    settingsWindow = null;
+  });
 }
 
 const createWindow = async () => {
@@ -142,7 +165,9 @@ const createWindow = async () => {
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Settings',
-      click() {}
+      click() {
+        createSettingsWindow();
+      }
     },
     {
       label: 'Quit',

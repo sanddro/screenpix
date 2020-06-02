@@ -1,11 +1,19 @@
 import React from 'react';
-import App from './containers/App';
+import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import Main from './components/main/Main';
+import Settings from './components/settings/Settings';
 
 export default function Routes() {
   return (
-    <App>
-      <Main />
-    </App>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <Main />
+        </Route>
+        <Route exact path="/settings">
+          <Settings />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
