@@ -1,18 +1,33 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styles from './Dimensions.scss';
 import { getAllDisplaysSize } from '../../utils/window';
 
 export default function Dimensions({ width, height, topLeft }: any) {
-  const displaysSize = getAllDisplaysSize();
+  const dimensions: any = useRef(null);
+  const [style, setStyle] = useState(styles.dimensions);
 
-  let style = styles.dimensions;
-  if (topLeft.y < 25) style += ' ' + styles.in;
-  if (topLeft.x + 100 > displaysSize.width) style += ' ' + styles.left;
-  if (
-    topLeft.x + 100 > displaysSize.width &&
-    topLeft.y + 25 > displaysSize.height
-  )
-    style += ' ' + styles.topLeft;
+  useEffect(() => {
+    const displaysSize = getAllDisplaysSize();
 
-  return <div className={style}>{`W: ${width} H: ${height}`}</div>;
+    let st = styles.dimensions;
+
+    if (dimensions && dimensions.current) {
+      const dimensionsRect = dimensions.current.getBoundingClientRect();
+
+      if (topLeft.y < dimensionsRect.height) st += ' ' + styles.in;
+      if (topLeft.x + dimensionsRect.width > displaysSize.width)
+        st += ' ' + styles.left;
+      if (
+        topLeft.x + dimensionsRect.width > displaysSize.width &&
+        topLeft.y + dimensionsRect.height > displaysSize.height
+      )
+        st += ' ' + styles.topLeft;
+
+      setStyle(st);
+    }
+  }, [dimensions, topLeft]);
+
+  return (
+    <div ref={dimensions} className={style}>{`W: ${width} H: ${height}`}</div>
+  );
 }
