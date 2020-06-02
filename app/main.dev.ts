@@ -20,6 +20,7 @@ import {
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import unhandled from 'electron-unhandled';
 import isDev from 'electron-is-dev';
 import MenuBuilder from './menu';
 import {
@@ -29,6 +30,8 @@ import {
 } from './utils/window';
 import writeToClipboard from './utils/clipboard';
 import { getConfig } from './constants/Config';
+
+unhandled();
 
 export default class AppUpdater {
   constructor() {
@@ -88,7 +91,7 @@ const onScreenshotKey = async () => {
 };
 
 function createTray() {
-  tray = new Tray(`${__dirname}/icon512.png`);
+  tray = new Tray(`${__dirname}/assets/icon.png`);
 
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -116,7 +119,7 @@ function createTray() {
         'CommandOrControl',
         'Ctrl'
       )} to open.`,
-      icon: `${__dirname}/icon512.png`
+      icon: `${__dirname}/assets/icon.png`
     });
     not.show();
   }
@@ -205,7 +208,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 };
 
 /**
