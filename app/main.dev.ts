@@ -28,7 +28,7 @@ import {
   getAllDisplaysSize
 } from './utils/window';
 import writeToClipboard from './utils/clipboard';
-import Config from './constants/Config';
+import { getConfig } from './constants/Config';
 
 export default class AppUpdater {
   constructor() {
@@ -53,6 +53,10 @@ if (isDev || process.env.DEBUG_PROD === 'true') {
   require('electron-debug')();
 }
 
+(global as any).shared = {
+  config: {}
+};
+
 function createSettingsWindow() {
   settingsWindow = new BrowserWindow({
     title: 'Settings',
@@ -73,6 +77,49 @@ function createSettingsWindow() {
   settingsWindow.on('closed', () => {
     settingsWindow = null;
   });
+}
+
+const onScreenshotKey = async () => {
+  if (mainWindow?.isVisible() || settingsWindow?.isVisible()) return;
+  showMainWindow(mainWindow);
+  loadingCSSKey = await (mainWindow as BrowserWindow).webContents.insertCSS(
+    '* { cursor: progress !important; }'
+  );
+};
+
+function createTray() {
+  tray = new Tray(`${__dirname}/icon512.png`);
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Settings',
+      click() {
+        createSettingsWindow();
+      }
+    },
+    {
+      label: 'Quit',
+      click() {
+        app.quit();
+      }
+    }
+  ]);
+  tray.setContextMenu(contextMenu);
+  tray.setToolTip('Screenpix');
+
+  tray.on('click', onScreenshotKey);
+
+  if (Notification.isSupported()) {
+    not = new Notification({
+      title: 'Screenpix',
+      body: `Screenpix is running minimized in tray. Press ${getConfig().screenshotHotkey.replace(
+        'CommandOrControl',
+        'Ctrl'
+      )} to open.`,
+      icon: `${__dirname}/icon512.png`
+    });
+    not.show();
+  }
 }
 
 const createWindow = async () => {
@@ -105,21 +152,21 @@ const createWindow = async () => {
   mainWindow.setPosition(0, 0);
   mainWindow.setSize(width, height);
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
-
-  mainWindow.webContents.on('did-finish-load', async () => {
+  mainWindow.loadURL(`file://${__dirname}/app.html`).then(async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+
     if (!isDev) mainWindow.webContents.closeDevTools();
 
-    globalShortcut.register(Config.screenshotHotkey, async () => {
-      if (mainWindow?.isVisible()) return;
-      showMainWindow(mainWindow);
-      loadingCSSKey = await (mainWindow as BrowserWindow).webContents.insertCSS(
-        '* { cursor: progress !important; }'
-      );
-    });
+    globalShortcut.register(getConfig().screenshotHotkey, onScreenshotKey);
+
+    createTray();
+  });
+
+  ipcMain.on('configChanged', (_, { oldValue, newValue }) => {
+    globalShortcut.unregister(oldValue.screenshotHotkey);
+    globalShortcut.register(newValue.screenshotHotkey, onScreenshotKey);
   });
 
   ipcMain.on('screenCaptured', () => {
@@ -136,19 +183,19 @@ const createWindow = async () => {
   });
 
   mainWindow.on('closed', () => {
-    globalShortcut.unregister(Config.screenshotHotkey);
+    globalShortcut.unregister(getConfig().screenshotHotkey);
     mainWindow = null;
     tray = null;
   });
 
   mainWindow.on('resize', () => {
     if (
-      mainWindow?.getSize()[0] !== width + Config.windowOutlineWidth ||
-      mainWindow?.getSize()[1] !== height + Config.windowOutlineWidth
+      mainWindow?.getSize()[0] !== width + getConfig().windowOutlineWidth ||
+      mainWindow?.getSize()[1] !== height + getConfig().windowOutlineWidth
     ) {
       mainWindow?.setSize(
-        width + Config.windowOutlineWidth,
-        height + Config.windowOutlineWidth
+        width + getConfig().windowOutlineWidth,
+        height + getConfig().windowOutlineWidth
       );
     }
   });
@@ -159,41 +206,6 @@ const createWindow = async () => {
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
-
-  tray = new Tray(`${__dirname}/icon512.png`);
-
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Settings',
-      click() {
-        createSettingsWindow();
-      }
-    },
-    {
-      label: 'Quit',
-      click() {
-        app.quit();
-      }
-    }
-  ]);
-  tray.setContextMenu(contextMenu);
-  tray.setToolTip('Screenpix');
-
-  tray.on('click', () => {
-    showMainWindow(mainWindow);
-  });
-
-  if (Notification.isSupported()) {
-    not = new Notification({
-      title: 'Screenpix',
-      body: `Screenpix is running minimized in tray. Press ${Config.screenshotHotkey.replace(
-        'CommandOrControl',
-        'Ctrl'
-      )} to open.`,
-      icon: `${__dirname}/icon512.png`
-    });
-    not.show();
-  }
 };
 
 /**

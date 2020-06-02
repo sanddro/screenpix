@@ -1,5 +1,5 @@
 import electron from 'electron';
-import Config from '../constants/Config';
+import { getConfig } from '../constants/Config';
 
 const singleMonitorMode = true;
 
@@ -34,10 +34,10 @@ export function showMainWindow(win) {
   win.webContents.send('showWindow');
   win.setOpacity(0);
   win.setBounds({
-    width: width + Config.windowOutlineWidth,
-    height: height + Config.windowOutlineWidth,
-    x: -(Config.windowOutlineWidth / 2),
-    y: -(Config.windowOutlineWidth / 2)
+    width: width + getConfig().windowOutlineWidth,
+    height: height + getConfig().windowOutlineWidth,
+    x: -(getConfig().windowOutlineWidth / 2),
+    y: -(getConfig().windowOutlineWidth / 2)
   });
   win.show();
   win.focus();

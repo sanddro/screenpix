@@ -68,15 +68,14 @@ export default function Selection({ onCopy, onSave, loaded }: any) {
             topLeft={topLeft}
           />
         )}
-        {isSelected && (
-          <Toolbar
-            width={size?.width}
-            height={size?.height}
-            bottomRight={bottomRight}
-            onCopy={copy}
-            onSave={save}
-          />
-        )}
+        <Toolbar
+          hidden={!isSelected}
+          width={size?.width}
+          height={size?.height}
+          bottomRight={bottomRight}
+          onCopy={copy}
+          onSave={save}
+        />
       </Resizer>
     </div>
   );

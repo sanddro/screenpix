@@ -11,7 +11,9 @@ module.exports = {
     'no-param-reassign': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
     'prefer-template': 'off',
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    'promise/always-return': 'off',
+    'promise/catch-or-return': 'off'
   },
   settings: {
     'import/resolver': {

@@ -3,7 +3,7 @@ import styles from './Toolbar.scss';
 import { getAllDisplaysSize } from '../../utils/window';
 import useKeyPress from '../../hooks/KeyPress';
 
-export default function Toolbar({ bottomRight, onCopy, onSave }: any) {
+export default function Toolbar({ hidden, bottomRight, onCopy, onSave }: any) {
   const toolbar: any = useRef(null);
   const [style, setStyle] = useState(styles.toolbar);
   const ctrlCPressed = useKeyPress('c', true);
@@ -35,7 +35,11 @@ export default function Toolbar({ bottomRight, onCopy, onSave }: any) {
   }, [ctrlCPressed, ctrlSPressed]);
 
   return (
-    <div ref={toolbar} className={style} onMouseDown={e => e.stopPropagation()}>
+    <div
+      ref={toolbar}
+      className={`${style} ${hidden ? styles.hidden : ''}`}
+      onMouseDown={e => e.stopPropagation()}
+    >
       <button className={styles.btn} title="Copy (Ctrl+C)" onClick={onCopy}>
         <i className="fa fa-copy" />
       </button>

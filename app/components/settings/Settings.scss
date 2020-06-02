@@ -1,0 +1,73 @@
+.settings {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings_wrapper {
+  flex: 1;
+}
+
+.setting_item {
+  margin: 20px;
+}
+
+.setting_label {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.setting_block {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.setting_block .setting_icon {
+  margin-right: 10px;
+  color: #555;
+}
+
+.inp {
+  outline: none;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding-left: 5px;
+  font-size: 12px;
+}
+
+.setting_buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 15px 20px;
+}
+
+.setting_button {
+  margin-right: 5px;
+  background: #6c757d;
+  outline: none;
+  border: none;
+  color: white;
+  border-radius: 3px;
+  padding: 5px 15px;
+  cursor: pointer;
+  transition: 0.1s background;
+}
+
+.setting_button:hover {
+  background: #5a6268;
+}
+
+.setting_button.red {
+  background: #ff1744;
+}
+
+.setting_button.red:hover {
+  background: darken(#ff1744, 10%);
+}

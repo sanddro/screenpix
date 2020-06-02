@@ -10,6 +10,10 @@
   cursor: default;
   z-index: 500;
 
+  &.hidden {
+    display: none;
+  }
+
   &.in {
     bottom: 5px;
     right: 5px;
