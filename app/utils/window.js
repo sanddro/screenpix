@@ -1,13 +1,13 @@
 import electron from 'electron';
 import { getConfig } from '../constants/Config';
 
-const singleMonitorMode = true;
+const singleDisplayMode = false;
 
 export function getDisplaysSize(displays) {
   let screensWidth = 0;
   let screensHeight = 0;
 
-  if (singleMonitorMode) displays = [displays[0]];
+  if (singleDisplayMode) displays = [displays[0]];
 
   displays.forEach(display => {
     screensWidth = Math.max(
