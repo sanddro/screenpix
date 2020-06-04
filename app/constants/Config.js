@@ -26,7 +26,7 @@ export function initConfig() {
   remote.getGlobal('shared').config = config;
 }
 
-function isMain() {
+export function isMain() {
   return process && (!process.type || process.type !== 'renderer');
 }
 

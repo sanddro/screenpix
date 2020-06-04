@@ -15,8 +15,25 @@ $magnifier-size: 300px;
   height: $magnifier-size;
   border-radius: 50%;
   overflow: hidden;
+  background-color: black;
 
   @include double-border(black, white, 2px, 50%);
+
+  &.top_left {
+    transform: translate(-$magnifier-size, -$magnifier-size);
+  }
+
+  &.top_right {
+    transform: translate(0, -$magnifier-size);
+  }
+
+  &.bottom_right {
+    transform: translate(0, 0);
+  }
+
+  &.bottom_left {
+    transform: translate(-$magnifier-size, 0);
+  }
 
   .dot {
     position: absolute;
@@ -65,21 +82,5 @@ $magnifier-size: 300px;
     background-size: 10px 10px;
     background-image: linear-gradient(to right, grey 1px, transparent 1px),
       linear-gradient(to bottom, grey 1px, transparent 1px);
-  }
-
-  &.top_left {
-    transform: translate(-$magnifier-size, -$magnifier-size);
-  }
-
-  &.top_right {
-    transform: translate(0, -$magnifier-size);
-  }
-
-  &.bottom_right {
-    transform: translate(0, 0);
-  }
-
-  &.bottom_left {
-    transform: translate(-$magnifier-size, 0);
   }
 }

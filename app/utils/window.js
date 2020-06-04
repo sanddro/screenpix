@@ -1,5 +1,5 @@
 import electron from 'electron';
-import { getConfig } from '../constants/Config';
+import { getConfig, isMain } from '../constants/Config';
 
 const singleDisplayMode = false;
 
@@ -24,7 +24,15 @@ export function getDisplaysSize(displays) {
 }
 
 export function getAllDisplaysSize() {
+  if (!isMain()) {
+    return {
+      width: document.body.clientWidth,
+      height: document.body.clientHeight
+    };
+  }
+
   const screen = electron.screen || electron.remote.screen;
+
   return getDisplaysSize(screen.getAllDisplays());
 }
 
