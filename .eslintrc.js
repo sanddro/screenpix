@@ -13,7 +13,8 @@ module.exports = {
     'prefer-template': 'off',
     'react/prop-types': 'off',
     'promise/always-return': 'off',
-    'promise/catch-or-return': 'off'
+    'promise/catch-or-return': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off'
   },
   settings: {
     'import/resolver': {

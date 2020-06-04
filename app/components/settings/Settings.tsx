@@ -4,10 +4,12 @@ import { getConfig, setConfig } from '../../constants/Config';
 import styles from './Settings.scss';
 
 const Settings = () => {
-  const [keyCombination, setKeyCombination] = useState('');
+  const [screenshotHotkey, setScreenshotHotkey] = useState('');
+  const [colorPickerHotkey, setColorPickerHotkey] = useState('');
 
   useEffect(() => {
-    setKeyCombination(getConfig().screenshotHotkey);
+    setScreenshotHotkey(getConfig().screenshotHotkey);
+    setColorPickerHotkey(getConfig().colorPickerHotkey);
   }, []);
 
   const validKeys = [
@@ -49,7 +51,7 @@ const Settings = () => {
     return (key.length === 1 && key.match(/[a-z]/i)) || validKeys.includes(key);
   };
 
-  const onKeyCombinationDown = (e: any) => {
+  const onKeyCombinationUp = (e: any, setter: any) => {
     const { key } = e;
     if (!isValidKey(key)) return;
 
@@ -59,7 +61,7 @@ const Settings = () => {
       (e.shiftKey ? 'Shift+' : '') +
       (key.length === 1 && key.match(/[a-z]/i) ? e.key.toUpperCase() : e.key);
 
-    setKeyCombination(newKeyCombination);
+    setter(newKeyCombination);
   };
 
   const onClose = () => {
@@ -68,7 +70,8 @@ const Settings = () => {
 
   const onSave = () => {
     setConfig((config: any) => {
-      config.screenshotHotkey = keyCombination;
+      config.screenshotHotkey = screenshotHotkey;
+      config.colorPickerHotkey = colorPickerHotkey;
     });
 
     onClose();
@@ -77,20 +80,26 @@ const Settings = () => {
   return (
     <div className={styles.settings}>
       <div className={styles.settings_wrapper}>
-        <div className={styles.setting_item}>
-          <div className={styles.setting_label}>Screenshot hotkey</div>
-          <div className={styles.setting_block}>
-            <i className={'far fa-keyboard ' + styles.setting_icon} />
-            <input
-              className={styles.inp}
-              type="text"
-              value={keyCombination.replace('CommandOrControl', 'Ctrl')}
-              onKeyUp={onKeyCombinationDown}
-              onChange={() => {}}
-            />
-          </div>
-        </div>
+        <SettingItem label="Screenshot Hotkey" icon="far fa-object-group">
+          <input
+            className={styles.inp}
+            type="text"
+            value={screenshotHotkey.replace('CommandOrControl', 'Ctrl')}
+            onKeyUp={e => onKeyCombinationUp(e, setScreenshotHotkey)}
+            onChange={() => {}}
+          />
+        </SettingItem>
+        <SettingItem label="Color Picker Hotkey" icon="fas fa-eye-dropper">
+          <input
+            className={styles.inp}
+            type="text"
+            value={colorPickerHotkey.replace('CommandOrControl', 'Ctrl')}
+            onKeyUp={e => onKeyCombinationUp(e, setColorPickerHotkey)}
+            onChange={() => {}}
+          />
+        </SettingItem>
       </div>
+
       <div className={styles.setting_buttons}>
         <button
           className={`${styles.setting_button} ${styles.red}`}
@@ -107,3 +116,15 @@ const Settings = () => {
 };
 
 export default Settings;
+
+function SettingItem({ label, icon, children }: any) {
+  return (
+    <div className={styles.setting_item}>
+      <div className={styles.setting_label}>{label}</div>
+      <div className={styles.setting_block}>
+        <i className={styles.setting_icon + ' ' + icon} />
+        {children}
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,22 @@
+@mixin double-border($c1: black, $c2: white, $width: 1px, $border-radius: 0) {
+  &::before,
+  &::after {
+    display: block;
+    content: '';
+    position: absolute;
+    border-radius: $border-radius;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    border: $width solid $c1;
+    z-index: 100;
+  }
+  &::after {
+    top: $width;
+    left: $width;
+    width: calc(100% - #{2 * $width});
+    height: calc(100% - #{2 * $width});
+    border: $width solid $c2;
+  }
+}

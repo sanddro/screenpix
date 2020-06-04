@@ -28,8 +28,9 @@ import {
   hideMainWindow,
   getAllDisplaysSize
 } from './utils/window';
-import writeToClipboard from './utils/clipboard';
 import { getConfig } from './constants/Config';
+import { Mode, setMode } from './constants/Mode';
+import { writeImageToClipboard, writeTextToClipboard } from './utils/clipboard';
 
 unhandled();
 
@@ -57,7 +58,8 @@ if (isDev || process.env.DEBUG_PROD === 'true') {
 }
 
 (global as any).shared = {
-  config: {}
+  config: {},
+  mode: Mode.screenshot
 };
 
 function createSettingsWindow() {
@@ -82,12 +84,23 @@ function createSettingsWindow() {
   });
 }
 
-const onScreenshotKey = async () => {
+const openWindow = async (mode: Mode) => {
   if (mainWindow?.isVisible() || settingsWindow?.isVisible()) return;
+
+  setMode(mode);
+
   showMainWindow(mainWindow);
   loadingCSSKey = await (mainWindow as BrowserWindow).webContents.insertCSS(
     '* { cursor: progress !important; }'
   );
+};
+
+const onScreenshotKey = () => {
+  openWindow(Mode.screenshot);
+};
+
+const onColorPickerKey = () => {
+  openWindow(Mode.colorPicker);
 };
 
 function createTray() {
@@ -163,13 +176,17 @@ const createWindow = async () => {
     if (!isDev) mainWindow.webContents.closeDevTools();
 
     globalShortcut.register(getConfig().screenshotHotkey, onScreenshotKey);
+    globalShortcut.register(getConfig().colorPickerHotkey, onColorPickerKey);
 
     createTray();
   });
 
   ipcMain.on('configChanged', (_, { oldValue, newValue }) => {
     globalShortcut.unregister(oldValue.screenshotHotkey);
+    globalShortcut.unregister(oldValue.colorPickerHotkey);
+
     globalShortcut.register(newValue.screenshotHotkey, onScreenshotKey);
+    globalShortcut.register(newValue.colorPickerHotkey, onColorPickerKey);
   });
 
   ipcMain.on('screenCaptured', () => {
@@ -177,7 +194,12 @@ const createWindow = async () => {
   });
 
   ipcMain.on('copyRegion', (_, base64String) => {
-    writeToClipboard(base64String);
+    writeImageToClipboard(base64String);
+    hideMainWindow(mainWindow);
+  });
+
+  ipcMain.on('copyColor', (_, color) => {
+    writeTextToClipboard(color);
     hideMainWindow(mainWindow);
   });
 
@@ -187,6 +209,8 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => {
     globalShortcut.unregister(getConfig().screenshotHotkey);
+    globalShortcut.unregister(getConfig().colorPickerHotkey);
+
     mainWindow = null;
     tray = null;
   });

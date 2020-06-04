@@ -1,7 +1,11 @@
 import electron from 'electron';
 
-export default function writeToClipboard(base64String) {
+export function writeImageToClipboard(base64String) {
   electron.clipboard.writeImage(
     electron.nativeImage.createFromDataURL(base64String)
   );
+}
+
+export function writeTextToClipboard(text) {
+  electron.clipboard.writeText(text);
 }

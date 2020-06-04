@@ -3,6 +3,7 @@ import { remote, ipcRenderer } from 'electron';
 export const defaultConfig = {
   windowOutlineWidth: 20,
   screenshotHotkey: 'Alt+PrintScreen',
+  colorPickerHotkey: 'CommandOrControl+Alt+PrintScreen',
   settingsWindowWidth: 500,
   settingsWindowHeight: 400
 };

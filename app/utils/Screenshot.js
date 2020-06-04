@@ -76,8 +76,8 @@ export function resizeDataURL(fullImg, x, y, wantedWidth, wantedHeight) {
     wantedHeight,
     0,
     0,
-    wantedWidth,
-    wantedHeight
+    canvas.width,
+    canvas.height
   );
   return canvas.toDataURL('image/png');
 }
@@ -89,4 +89,18 @@ export function downloadBase64Image(base64String) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+export function getColorFromImage(img, p) {
+  const canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+  const pixelData = canvas.getContext('2d').getImageData(p.x - 1, p.y - 1, 1, 1)
+    .data;
+  return Array.from(pixelData)
+    .map(a => a.toString(16))
+    .slice(0, -1)
+    .join('')
+    .toUpperCase();
 }
