@@ -83,7 +83,7 @@ export default function Main() {
       {isVisible && mode === Mode.screenshot && (
         <Selection onCopy={onCopy} onSave={onSave} loaded={!!imgSrc} />
       )}
-      {isVisible && mode === Mode.colorPicker && (
+      {isVisible && imgSrc && mode === Mode.colorPicker && (
         <ColorPicker
           onColorCopy={onColorCopy}
           fullImg={fullImg && fullImg.current}
