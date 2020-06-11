@@ -1,7 +1,7 @@
 import electron from 'electron';
 import { getConfig, isMain } from '../constants/Config';
 
-const singleDisplayMode = false;
+const singleDisplayMode = true;
 
 export function getDisplaysSize(displays) {
   let screensWidth = 0;
@@ -36,7 +36,7 @@ export function getAllDisplaysSize() {
   return getDisplaysSize(screen.getAllDisplays());
 }
 
-export function showMainWindow(win) {
+export function showMainWindow(win, ignoreMouseEvents, delay = 300) {
   const { width, height } = getAllDisplaysSize();
   // opacity to fix issue when window shows and then moves to cursor
   win.webContents.send('showWindow');
@@ -49,9 +49,10 @@ export function showMainWindow(win) {
   });
   win.show();
   win.focus();
+  win.setIgnoreMouseEvents(ignoreMouseEvents);
   setTimeout(() => {
     win.setOpacity(1);
-  }, 300);
+  }, delay);
 }
 
 export function hideMainWindow(win) {
@@ -60,5 +61,6 @@ export function hideMainWindow(win) {
   // to return focus to previous place. minimize - windows, hide - linux
   win.minimize();
   win.hide();
+  win.setIgnoreMouseEvents(false);
   win.webContents.send('windowHidden');
 }

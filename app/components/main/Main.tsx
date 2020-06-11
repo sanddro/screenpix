@@ -4,10 +4,11 @@ import styles from './Main.scss';
 import takeScreenshot, {
   resizeDataURL,
   downloadBase64Image
-} from '../../utils/Screenshot';
-import Selection from '../selection/Selection';
+} from '../../utils/ScreenCapture';
+import Screenshot from '../screenshot/Screenshot';
 import { getMode, Mode } from '../../constants/Mode';
 import ColorPicker from '../color-picker/ColorPicker';
+import GifCapture from '../gif-capture/GifCapture';
 
 export default function Main() {
   const fullImg = useRef(null);
@@ -20,6 +21,7 @@ export default function Main() {
   useEffect(() => {
     ipcRenderer.on('showWindow', async () => {
       setIsVisible(true);
+      if (getMode() === Mode.video) return;
       try {
         const base64String = (await takeScreenshot()) as string;
         setImgSrc(base64String);
@@ -43,7 +45,7 @@ export default function Main() {
 
   const onCopy = async (topLeft: any, width: number, height: number) => {
     const resized = await resizeDataURL(
-      document.getElementById('full-img'),
+      document.getElementById('full-img') as HTMLImageElement,
       topLeft.x,
       topLeft.y,
       width,
@@ -54,7 +56,7 @@ export default function Main() {
 
   const onSave = (topLeft: any, width: number, height: number) => {
     const resized: any = resizeDataURL(
-      document.getElementById('full-img'),
+      document.getElementById('full-img') as HTMLImageElement,
       topLeft.x,
       topLeft.y,
       width,
@@ -62,7 +64,7 @@ export default function Main() {
     );
     if (!resized) return;
 
-    downloadBase64Image(resized);
+    downloadBase64Image(resized, 'Screenshot.png');
 
     ipcRenderer.send('hideMainWindow');
   };
@@ -71,8 +73,12 @@ export default function Main() {
     ipcRenderer.send('copyColor', color);
   };
 
+  const onGifCapture = (gifBase64: string) => {
+    ipcRenderer.send('gifCapture', gifBase64);
+  };
+
   return (
-    <div className={styles.wrapper}>
+    <>
       <img
         className={`${styles.capturedImg} ${!imgSrc ? styles.hidden : ''}`}
         src={imgSrc}
@@ -81,7 +87,7 @@ export default function Main() {
         ref={fullImg}
       />
       {isVisible && mode === Mode.screenshot && (
-        <Selection onCopy={onCopy} onSave={onSave} loaded={!!imgSrc} />
+        <Screenshot onCopy={onCopy} onSave={onSave} loaded={!!imgSrc} />
       )}
       {isVisible && imgSrc && mode === Mode.colorPicker && (
         <ColorPicker
@@ -91,6 +97,9 @@ export default function Main() {
           <img src={imgSrc} alt="" />
         </ColorPicker>
       )}
-    </div>
+      {isVisible && mode === Mode.video && (
+        <GifCapture onCapture={onGifCapture} />
+      )}
+    </>
   );
 }

@@ -6,10 +6,12 @@ import styles from './Settings.scss';
 const Settings = () => {
   const [screenshotHotkey, setScreenshotHotkey] = useState('');
   const [colorPickerHotkey, setColorPickerHotkey] = useState('');
+  const [videoHotkey, setVideoHotkey] = useState('');
 
   useEffect(() => {
     setScreenshotHotkey(getConfig().screenshotHotkey);
     setColorPickerHotkey(getConfig().colorPickerHotkey);
+    setVideoHotkey(getConfig().videoHotkey);
   }, []);
 
   const validKeys = [
@@ -95,6 +97,15 @@ const Settings = () => {
             type="text"
             value={colorPickerHotkey.replace('CommandOrControl', 'Ctrl')}
             onKeyUp={e => onKeyCombinationUp(e, setColorPickerHotkey)}
+            onChange={() => {}}
+          />
+        </SettingItem>
+        <SettingItem label="Video Capture Hotkey" icon="fas fa-video">
+          <input
+            className={styles.inp}
+            type="text"
+            value={videoHotkey.replace('CommandOrControl', 'Ctrl')}
+            onKeyUp={e => onKeyCombinationUp(e, setVideoHotkey)}
             onChange={() => {}}
           />
         </SettingItem>

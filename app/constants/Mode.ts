@@ -17,5 +17,6 @@ export function setMode(mode: Mode) {
 
 export enum Mode {
   colorPicker,
-  screenshot
+  screenshot,
+  video
 }

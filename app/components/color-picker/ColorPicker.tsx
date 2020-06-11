@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import styles from './ColorPicker.scss';
 import useMousePosition from '../../hooks/MousePosition';
-import { getColorFromImage } from '../../utils/Screenshot';
+import { getColorFromImage } from '../../utils/ScreenCapture';
 
 const magnifierSize = 300;
 

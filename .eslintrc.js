@@ -14,7 +14,8 @@ module.exports = {
     'react/prop-types': 'off',
     'promise/always-return': 'off',
     'promise/catch-or-return': 'off',
-    'jsx-a11y/click-events-have-key-events': 'off'
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'class-methods-use-this': 'off'
   },
   settings: {
     'import/resolver': {

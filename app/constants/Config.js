@@ -4,6 +4,7 @@ export const defaultConfig = {
   windowOutlineWidth: 20,
   screenshotHotkey: 'Alt+PrintScreen',
   colorPickerHotkey: 'CommandOrControl+Alt+PrintScreen',
+  videoHotkey: 'CommandOrControl+Alt+Shift+PrintScreen',
   settingsWindowWidth: 500,
   settingsWindowHeight: 400
 };

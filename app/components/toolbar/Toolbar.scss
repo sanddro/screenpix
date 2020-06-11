@@ -53,4 +53,21 @@
       outline: none;
     }
   }
+
+  .recording_time {
+    position: relative;
+    padding-left: 8px;
+    margin-left: 5px;
+    font-family: consolas, Courier, monospace;
+    color: red;
+    &::before {
+      content: '';
+      display: block;
+      height: 100%;
+      width: 1px;
+      background: #6f6f6f;
+      position: absolute;
+      left: 0;
+    }
+  }
 }

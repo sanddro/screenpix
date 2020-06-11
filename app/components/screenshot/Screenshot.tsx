@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import styles from './Selection.scss';
+import styles from './Screenshot.scss';
 import Toolbar from '../toolbar/Toolbar';
 import Dimensions from '../dimensions/Dimensions';
 import Resizer from '../resizer/Resizer';
 
-export default function Selection({ onCopy, onSave, loaded }: any) {
+export default function Screenshot({ onCopy, onSave, loaded }: any) {
   const [size, setSize]: any = useState(null);
   const [topLeft, setTopLeft]: any = useState(null);
   const [isSelected, setIsSelected] = useState(false);
@@ -75,6 +75,8 @@ export default function Selection({ onCopy, onSave, loaded }: any) {
           bottomRight={bottomRight}
           onCopy={copy}
           onSave={save}
+          showRecord={false}
+          showStop={false}
         />
       </Resizer>
     </div>

@@ -10,8 +10,19 @@ const opposite: any = {
   'bottom-left': 'top-right'
 };
 
+export const BorderColor = {
+  green: 'green',
+  red: 'red',
+  white: 'white'
+};
+
 export default function Resizer({
   children,
+  resizable = true,
+  draggable = true,
+  reselectable = true,
+  clickThrough = false,
+  borderColor = BorderColor.white,
   onChange = () => {},
   onSelectStart = () => {},
   onSelectEnd = () => {}
@@ -76,6 +87,7 @@ export default function Resizer({
   }
 
   const onMouseDown = (e: any) => {
+    if (!resizable) return;
     e.preventDefault();
     const handle = e.target.getAttribute('data-handle');
     const oppositeHandle: any = document.querySelector(
@@ -160,6 +172,8 @@ export default function Resizer({
   }, [isResizing, isDragging, startPos, endPos, dragEndPos, dragStartPos]);
 
   const onDragStart = (e: any) => {
+    if (!draggable) return;
+
     const wrapperRect = wrapper.current.getBoundingClientRect();
     const x = e.clientX - wrapperRect.left;
     const y = e.clientY - wrapperRect.top;
@@ -170,6 +184,8 @@ export default function Resizer({
   };
 
   const onNewSelect = (e: any) => {
+    if (!reselectable) return;
+
     if (!e.target.getAttribute('data-iswrapper')) return;
     const wrapperRect = wrapper.current.getBoundingClientRect();
     const x = e.clientX - wrapperRect.left + handleSize / 2;
@@ -186,13 +202,18 @@ export default function Resizer({
     <div
       ref={wrapper}
       className={styles.wrapper}
+      data-click-through={clickThrough}
       data-iswrapper="true"
       onMouseDown={onNewSelect}
     >
       <div
         ref={box}
-        className={`${styles.box} ${size ? '' : styles.hidden}`}
+        className={`${styles.box} ${size ? '' : styles.hidden} ${
+          (styles as any)[borderColor]
+        } ${!resizable ? styles.non_resizable : ''}`}
+        data-click-through={clickThrough}
         style={{
+          cursor: draggable ? 'all-scroll' : 'default',
           width: size && size.width,
           height: size && size.height,
           left: topLeft && topLeft.x,

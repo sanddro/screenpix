@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { remote } from 'electron';
 
 export default function useMousePosition(target: any = null) {
-  const [mousePosition, setMousePosition]: any = useState(null);
+  const [mousePosition, setMousePosition]: any = useState(
+    remote.screen.getCursorScreenPoint()
+  );
 
   useEffect(() => {
     window.onmousemove = (e: any) => {

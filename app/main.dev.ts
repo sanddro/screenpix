@@ -16,10 +16,12 @@ import {
   Menu,
   globalShortcut,
   Notification,
-  ipcMain
+  ipcMain,
+  dialog
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import fs from 'fs';
 import unhandled from 'electron-unhandled';
 import isDev from 'electron-is-dev';
 import MenuBuilder from './menu';
@@ -84,15 +86,21 @@ function createSettingsWindow() {
   });
 }
 
-const openWindow = async (mode: Mode) => {
+const openWindow = async (
+  mode: Mode,
+  withoutLoading = false,
+  ignoreMouseEvents = false
+) => {
   if (mainWindow?.isVisible() || settingsWindow?.isVisible()) return;
 
   setMode(mode);
 
-  showMainWindow(mainWindow);
-  loadingCSSKey = await (mainWindow as BrowserWindow).webContents.insertCSS(
-    '* { cursor: progress !important; }'
-  );
+  showMainWindow(mainWindow, ignoreMouseEvents);
+  if (!withoutLoading) {
+    loadingCSSKey = await (mainWindow as BrowserWindow).webContents.insertCSS(
+      '* { cursor: progress !important; }'
+    );
+  }
 };
 
 const onScreenshotKey = () => {
@@ -101,6 +109,10 @@ const onScreenshotKey = () => {
 
 const onColorPickerKey = () => {
   openWindow(Mode.colorPicker);
+};
+
+const onVideoHotkey = () => {
+  openWindow(Mode.video, true);
 };
 
 function createTray() {
@@ -137,6 +149,18 @@ function createTray() {
     not.show();
   }
 }
+
+const registerHotkeys = (config: any = getConfig()) => {
+  globalShortcut.register(config.screenshotHotkey, onScreenshotKey);
+  globalShortcut.register(config.colorPickerHotkey, onColorPickerKey);
+  globalShortcut.register(config.videoHotkey, onVideoHotkey);
+};
+
+const unregisterHotkeys = (config: any = getConfig()) => {
+  globalShortcut.unregister(config.screenshotHotkey);
+  globalShortcut.unregister(config.colorPickerHotkey);
+  globalShortcut.unregister(config.videoHotkey);
+};
 
 const createWindow = async () => {
   const { width, height } = getAllDisplaysSize();
@@ -175,18 +199,14 @@ const createWindow = async () => {
 
     if (!isDev) mainWindow.webContents.closeDevTools();
 
-    globalShortcut.register(getConfig().screenshotHotkey, onScreenshotKey);
-    globalShortcut.register(getConfig().colorPickerHotkey, onColorPickerKey);
+    registerHotkeys();
 
     createTray();
   });
 
   ipcMain.on('configChanged', (_, { oldValue, newValue }) => {
-    globalShortcut.unregister(oldValue.screenshotHotkey);
-    globalShortcut.unregister(oldValue.colorPickerHotkey);
-
-    globalShortcut.register(newValue.screenshotHotkey, onScreenshotKey);
-    globalShortcut.register(newValue.colorPickerHotkey, onColorPickerKey);
+    unregisterHotkeys(oldValue);
+    registerHotkeys(newValue);
   });
 
   ipcMain.on('screenCaptured', () => {
@@ -201,6 +221,23 @@ const createWindow = async () => {
   ipcMain.on('copyColor', (_, color) => {
     writeTextToClipboard(color);
     hideMainWindow(mainWindow);
+  });
+
+  ipcMain.on('gifCapture', async (_, gifBase64) => {
+    hideMainWindow(mainWindow);
+
+    const { filePath }: any = await dialog.showSaveDialog(
+      mainWindow as BrowserWindow,
+      {
+        title: 'Save Gif',
+        defaultPath: 'Image.gif'
+      }
+    );
+
+    console.log(filePath);
+
+    const base64Data = gifBase64.replace(/^data:image\/gif;base64,/, '');
+    fs.writeFileSync(filePath, base64Data, 'base64');
   });
 
   ipcMain.on('hideMainWindow', () => {
