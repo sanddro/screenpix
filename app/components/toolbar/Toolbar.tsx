@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import styles from './Toolbar.scss';
-import { getAllDisplaysSize } from '../../utils/window';
+import { getAllDisplaysSize } from '../../utils/Window';
 import useKeyPress from '../../hooks/KeyPress';
 
 export default function Toolbar({

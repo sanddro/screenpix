@@ -1,7 +1,7 @@
 import electron from 'electron';
 import { getConfig, isMain } from '../constants/Config';
 
-const singleDisplayMode = true;
+const singleDisplayMode = false;
 
 export function getDisplaysSize(displays) {
   let screensWidth = 0;

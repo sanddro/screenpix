@@ -29,10 +29,10 @@ import {
   showMainWindow,
   hideMainWindow,
   getAllDisplaysSize
-} from './utils/window';
+} from './utils/Window';
 import { getConfig } from './constants/Config';
 import { Mode, setMode } from './constants/Mode';
-import { writeImageToClipboard, writeTextToClipboard } from './utils/clipboard';
+import { writeImageToClipboard, writeTextToClipboard } from './utils/Clipboard';
 
 unhandled();
 
@@ -111,8 +111,8 @@ const onColorPickerKey = () => {
   openWindow(Mode.colorPicker);
 };
 
-const onVideoHotkey = () => {
-  openWindow(Mode.video, true);
+const onGifHotkey = () => {
+  openWindow(Mode.gif, true);
 };
 
 function createTray() {
@@ -153,13 +153,13 @@ function createTray() {
 const registerHotkeys = (config: any = getConfig()) => {
   globalShortcut.register(config.screenshotHotkey, onScreenshotKey);
   globalShortcut.register(config.colorPickerHotkey, onColorPickerKey);
-  globalShortcut.register(config.videoHotkey, onVideoHotkey);
+  globalShortcut.register(config.gifHotkey, onGifHotkey);
 };
 
 const unregisterHotkeys = (config: any = getConfig()) => {
   globalShortcut.unregister(config.screenshotHotkey);
   globalShortcut.unregister(config.colorPickerHotkey);
-  globalShortcut.unregister(config.videoHotkey);
+  globalShortcut.unregister(config.gifHotkey);
 };
 
 const createWindow = async () => {
@@ -233,8 +233,6 @@ const createWindow = async () => {
         defaultPath: 'Image.gif'
       }
     );
-
-    console.log(filePath);
 
     const base64Data = gifBase64.replace(/^data:image\/gif;base64,/, '');
     fs.writeFileSync(filePath, base64Data, 'base64');

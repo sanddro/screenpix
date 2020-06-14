@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import styles from './Dimensions.scss';
-import { getAllDisplaysSize } from '../../utils/window';
+import { getAllDisplaysSize } from '../../utils/Window';
 
 export default function Dimensions({ width, height, topLeft }: any) {
   const dimensions: any = useRef(null);

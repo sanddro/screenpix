@@ -21,7 +21,7 @@ export default function Main() {
   useEffect(() => {
     ipcRenderer.on('showWindow', async () => {
       setIsVisible(true);
-      if (getMode() === Mode.video) return;
+      if (getMode() === Mode.gif) return;
       try {
         const base64String = (await takeScreenshot()) as string;
         setImgSrc(base64String);
@@ -97,7 +97,7 @@ export default function Main() {
           <img src={imgSrc} alt="" />
         </ColorPicker>
       )}
-      {isVisible && mode === Mode.video && (
+      {isVisible && mode === Mode.gif && (
         <GifCapture onCapture={onGifCapture} />
       )}
     </>

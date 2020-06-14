@@ -1,6 +1,6 @@
 import { Menu, BrowserWindow } from 'electron';
 import isDev from 'electron-is-dev';
-import { hideMainWindow } from './utils/window';
+import { hideMainWindow } from './utils/Window';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;

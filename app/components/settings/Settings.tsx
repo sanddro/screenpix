@@ -6,12 +6,12 @@ import styles from './Settings.scss';
 const Settings = () => {
   const [screenshotHotkey, setScreenshotHotkey] = useState('');
   const [colorPickerHotkey, setColorPickerHotkey] = useState('');
-  const [videoHotkey, setVideoHotkey] = useState('');
+  const [gifHotkey, setGifHotkey] = useState('');
 
   useEffect(() => {
     setScreenshotHotkey(getConfig().screenshotHotkey);
     setColorPickerHotkey(getConfig().colorPickerHotkey);
-    setVideoHotkey(getConfig().videoHotkey);
+    setGifHotkey(getConfig().gifHotkey);
   }, []);
 
   const validKeys = [
@@ -74,6 +74,7 @@ const Settings = () => {
     setConfig((config: any) => {
       config.screenshotHotkey = screenshotHotkey;
       config.colorPickerHotkey = colorPickerHotkey;
+      config.gifHotkey = gifHotkey;
     });
 
     onClose();
@@ -100,12 +101,12 @@ const Settings = () => {
             onChange={() => {}}
           />
         </SettingItem>
-        <SettingItem label="Video Capture Hotkey" icon="fas fa-video">
+        <SettingItem label="Gif Capture Hotkey" icon="fas fa-video">
           <input
             className={styles.inp}
             type="text"
-            value={videoHotkey.replace('CommandOrControl', 'Ctrl')}
-            onKeyUp={e => onKeyCombinationUp(e, setVideoHotkey)}
+            value={gifHotkey.replace('CommandOrControl', 'Ctrl')}
+            onKeyUp={e => onKeyCombinationUp(e, setGifHotkey)}
             onChange={() => {}}
           />
         </SettingItem>
