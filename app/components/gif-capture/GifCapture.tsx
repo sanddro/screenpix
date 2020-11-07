@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ipcRenderer } from 'electron';
 import styles from './GifCapture.scss';
 import Toolbar from '../toolbar/Toolbar';
 import Dimensions from '../dimensions/Dimensions';
@@ -7,6 +6,7 @@ import Resizer, { BorderColor } from '../resizer/Resizer';
 import useClickThrough from '../../hooks/ClickThrough';
 import { GifCapturer } from '../../utils/ScreenCapture';
 import { timeStampToRecordingTime } from '../../utils/Time';
+import { getHoveredDisplayBounds } from '../../utils/window';
 
 let gifCapturer: any = null;
 
@@ -84,12 +84,29 @@ export default function GifCapture({ onCapture }: any) {
       document.body.offsetHeight - borders.borderTopWidth - size.height;
   }
 
-  if (savingGif) return <></>;
+  if (savingGif) {
+    const bounds = getHoveredDisplayBounds();
+    return (
+      <div className={styles.loader}>
+        <div
+          style={{
+            width: bounds && bounds.width,
+            height: bounds && bounds.height,
+            left: bounds && bounds.x,
+            top: bounds && bounds.y
+          }}
+        >
+          <i className="fas fa-spinner" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.wrapper} data-click-through={isRecording}>
       <Resizer
         draggable={!isRecording}
+        oneDisplay
         resizable={!isRecording}
         reselectable={!isRecording}
         clickThrough={isRecording}

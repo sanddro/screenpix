@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Resizer.scss';
+import { getHoveredDisplayBounds } from '../../utils/window';
 
 const handleSize = 10;
 
@@ -20,6 +21,7 @@ export default function Resizer({
   children,
   resizable = true,
   draggable = true,
+  oneDisplay = false,
   reselectable = true,
   clickThrough = false,
   borderColor = BorderColor.white,
@@ -36,6 +38,7 @@ export default function Resizer({
   const [isDragging, setIsDragging]: any = useState(false);
   const [dragStartPos, setDragStartPos]: any = useState(null);
   const [dragEndPos, setDragEndPos]: any = useState(null);
+  const [selectBounds, setSelectBounds]: any = useState(null);
 
   let size: any = null;
   let topLeft: any = null;
@@ -73,17 +76,18 @@ export default function Resizer({
     topLeft.y += dragEndPos.y - dragStartPos.y;
   }
 
-  if (topLeft && wrapper && wrapper.current) {
-    const wrapperSize = {
-      width: wrapper.current.getBoundingClientRect().width,
-      height: wrapper.current.getBoundingClientRect().height
-    };
+  if (topLeft && wrapper && wrapper.current && selectBounds) {
+    topLeft.x = Math.max(topLeft.x, selectBounds.x);
+    topLeft.y = Math.max(topLeft.y, selectBounds.y);
 
-    topLeft.x = Math.max(topLeft.x, 0);
-    topLeft.y = Math.max(topLeft.y, 0);
-
-    topLeft.x = Math.min(topLeft.x, wrapperSize.width - size.width);
-    topLeft.y = Math.min(topLeft.y, wrapperSize.height - size.height);
+    topLeft.x = Math.min(
+      topLeft.x,
+      selectBounds.x + selectBounds.width - size.width
+    );
+    topLeft.y = Math.min(
+      topLeft.y,
+      selectBounds.y + selectBounds.height - size.height
+    );
   }
 
   const onMouseDown = (e: any) => {
@@ -116,11 +120,11 @@ export default function Resizer({
         let x = e.clientX - wrapperRect.left;
         let y = e.clientY - wrapperRect.top;
 
-        x = Math.max(x, 0);
-        y = Math.max(y, 0);
+        x = Math.max(x, selectBounds.x);
+        y = Math.max(y, selectBounds.y);
 
-        x = Math.min(x, wrapper.current.offsetWidth);
-        y = Math.min(y, wrapper.current.offsetHeight);
+        x = Math.min(x, selectBounds.x + selectBounds.width);
+        y = Math.min(y, selectBounds.y + selectBounds.height);
 
         setEndPos({
           x,
@@ -169,7 +173,15 @@ export default function Resizer({
     return () => {
       document.body.onmousemove = null;
     };
-  }, [isResizing, isDragging, startPos, endPos, dragEndPos, dragStartPos]);
+  }, [
+    isResizing,
+    isDragging,
+    startPos,
+    endPos,
+    dragEndPos,
+    dragStartPos,
+    selectBounds
+  ]);
 
   const onDragStart = (e: any) => {
     if (!draggable) return;
@@ -190,6 +202,15 @@ export default function Resizer({
     const wrapperRect = wrapper.current.getBoundingClientRect();
     const x = e.clientX - wrapperRect.left + handleSize / 2;
     const y = e.clientY - wrapperRect.top + handleSize / 2;
+
+    if (oneDisplay) setSelectBounds(getHoveredDisplayBounds());
+    else
+      setSelectBounds({
+        x: 0,
+        y: 0,
+        width: wrapper.current.offsetWidth,
+        height: wrapper.current.offsetHeight
+      });
 
     setStartPos({ x, y });
     setEndPos({ x, y });

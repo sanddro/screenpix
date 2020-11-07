@@ -2,7 +2,7 @@
 // @ts-ignore
 import gifshot from 'gifshot';
 import { remote as electron, desktopCapturer, Point } from 'electron';
-import { getDisplaysSize } from './Window';
+import { getDisplaysSize } from './window';
 
 async function base64ToImg(base64String: string): Promise<HTMLImageElement> {
   return new Promise(resolve => {

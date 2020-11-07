@@ -4,3 +4,27 @@
   position: relative;
   cursor: url(../../assets/cursor.png) 10 10, auto;
 }
+
+.loader {
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+
+  > div {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    > i {
+      font-size: 50px;
+      color: white;
+      animation: spin 1s ease infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

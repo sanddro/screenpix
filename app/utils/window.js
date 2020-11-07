@@ -7,7 +7,8 @@ export function getDisplaysSize(displays) {
   let screensWidth = 0;
   let screensHeight = 0;
 
-  if (singleDisplayMode) displays = [displays[0]];
+  const screen = electron.screen || electron.remote.screen;
+  if (singleDisplayMode) displays = [screen.getPrimaryDisplay()];
 
   displays.forEach(display => {
     screensWidth = Math.max(
@@ -36,6 +37,14 @@ export function getAllDisplaysSize() {
   return getDisplaysSize(screen.getAllDisplays());
 }
 
+export function getHoveredDisplayBounds() {
+  const screen = electron.screen || electron.remote.screen;
+
+  return singleDisplayMode
+    ? screen.getPrimaryDisplay().bounds
+    : screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).bounds;
+}
+
 export function showMainWindow(win, ignoreMouseEvents, delay = 300) {
   const { width, height } = getAllDisplaysSize();
   // opacity to fix issue when window shows and then moves to cursor
@@ -47,6 +56,7 @@ export function showMainWindow(win, ignoreMouseEvents, delay = 300) {
     x: -(getConfig().windowOutlineWidth / 2),
     y: -(getConfig().windowOutlineWidth / 2)
   });
+  win.closeDevTools();
   win.show();
   win.focus();
   win.setIgnoreMouseEvents(ignoreMouseEvents);
