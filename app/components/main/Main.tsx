@@ -66,7 +66,7 @@ export default function Main() {
 
     downloadBase64Image(resized, 'Screenshot.png');
 
-    ipcRenderer.send('hideMainWindow');
+    ipcRenderer.send('screenshotSaved');
   };
 
   const onColorCopy = (color: string) => {

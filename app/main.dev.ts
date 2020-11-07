@@ -29,10 +29,10 @@ import {
   showMainWindow,
   hideMainWindow,
   getAllDisplaysSize
-} from './utils/Window';
+} from './utils/window';
 import { getConfig } from './constants/Config';
 import { Mode, setMode } from './constants/Mode';
-import { writeImageToClipboard, writeTextToClipboard } from './utils/Clipboard';
+import { writeImageToClipboard, writeTextToClipboard } from './utils/clipboard';
 
 unhandled();
 
@@ -63,6 +63,17 @@ if (isDev || process.env.DEBUG_PROD === 'true') {
   config: {},
   mode: Mode.screenshot
 };
+
+function sendNotification(text: string) {
+  if (Notification.isSupported()) {
+    not = new Notification({
+      title: 'Screenpix',
+      body: text,
+      icon: `${__dirname}/assets/icon.png`
+    });
+    not.show();
+  }
+}
 
 function createSettingsWindow() {
   settingsWindow = new BrowserWindow({
@@ -137,17 +148,12 @@ function createTray() {
 
   tray.on('click', onScreenshotKey);
 
-  if (Notification.isSupported()) {
-    not = new Notification({
-      title: 'Screenpix',
-      body: `Screenpix is running minimized in tray. Press ${getConfig().screenshotHotkey.replace(
-        'CommandOrControl',
-        'Ctrl'
-      )} to open.`,
-      icon: `${__dirname}/assets/icon.png`
-    });
-    not.show();
-  }
+  sendNotification(
+    `Screenpix is running minimized in tray. Press ${getConfig().screenshotHotkey.replace(
+      'CommandOrControl',
+      'Ctrl'
+    )} to open.`
+  );
 }
 
 const registerHotkeys = (config: any = getConfig()) => {
@@ -216,11 +222,18 @@ const createWindow = async () => {
   ipcMain.on('copyRegion', (_, base64String) => {
     writeImageToClipboard(base64String);
     hideMainWindow(mainWindow);
+    sendNotification('Screenshot is copied to clipboard.');
   });
 
   ipcMain.on('copyColor', (_, color) => {
     writeTextToClipboard(color);
     hideMainWindow(mainWindow);
+    sendNotification(`Color ${color} is copied to clipboard.`);
+  });
+
+  ipcMain.on('screenshotSaved', () => {
+    hideMainWindow(mainWindow);
+    sendNotification('Screenshot is saved.');
   });
 
   ipcMain.on('gifCapture', async (_, gifBase64) => {
@@ -236,6 +249,7 @@ const createWindow = async () => {
 
     const base64Data = gifBase64.replace(/^data:image\/gif;base64,/, '');
     fs.writeFileSync(filePath, base64Data, 'base64');
+    sendNotification(`Gif is saved to ${filePath}.`);
   });
 
   ipcMain.on('hideMainWindow', () => {
